@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="60dp">
 
@@ -16,10 +16,10 @@
             android:layout_gravity="center_vertical"
             android:layout_marginStart="10dp"
             android:src="@mipmap/ic_warp_exchange" />
-    </LinearLayout>
+    </FrameLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/main"
+        android:id="@+id/main_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".MainActivity">

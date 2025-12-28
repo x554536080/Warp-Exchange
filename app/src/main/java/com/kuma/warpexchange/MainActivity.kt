@@ -1,5 +1,6 @@
 package com.kuma.warpexchange
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -20,13 +21,15 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
+import kotlin.io.encoding.ExperimentalEncodingApi
 
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        const val BASE_URL = "http://172.20.10.3:8000/"
+        const val BASE_URL_USER = "http://172.20.10.3:8000/"
         const val APP_SP_KEY = "warp_exchange_sp"
-        const val LOGIN_STATUE_COOKIE = "login_status_cookie_sp"
+        const val LOGIN_STATUS_COOKIE = "login_status_cookie_sp"
+        const val USER_AUTHORIZATION = "user_authorization_sp"
     }
 
     private var isSignUp = false
@@ -43,7 +46,7 @@ class MainActivity : AppCompatActivity() {
 
 
     private val retrofit =
-        Retrofit.Builder().baseUrl(BASE_URL)
+        Retrofit.Builder().baseUrl(BASE_URL_USER)
             .client(OkHttpClient.Builder().build())
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
@@ -54,25 +57,27 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
         initViews()
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main_container)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
-        if (SPUtil.getString(this, LOGIN_STATUE_COOKIE).isNotEmpty()) {
+        if (SPUtil.getString(this, LOGIN_STATUS_COOKIE).isNotEmpty()) {
             if (CookieUtil.getCookieExpires(
                     SPUtil.getString(
                         this,
-                        LOGIN_STATUE_COOKIE
+                        LOGIN_STATUS_COOKIE
                     )
                 )?.time!! > System.currentTimeMillis()
             ) {
                 val operationResultTextView: TextView = findViewById(R.id.operation_result)
                 operationResultTextView.text = "Signed in and expired at ${
                     CookieUtil.getCookieExpires(
-                        SPUtil.getString(this, LOGIN_STATUE_COOKIE)
+                        SPUtil.getString(this, LOGIN_STATUS_COOKIE)
                     )?.toString()!!
                 }"
+                startActivity(Intent(this, IndexActivity::class.java))
+                finish()
             } else {
                 val operationResultTextView: TextView = findViewById(R.id.operation_result)
                 operationResultTextView.text = "Login session expired"
@@ -158,6 +163,7 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    @OptIn(ExperimentalEncodingApi::class)
     private fun doSignIn() {
         val operationResultTextView: TextView = findViewById(R.id.operation_result)
         val call = retrofit.create(UserService::class.java)
@@ -170,12 +176,23 @@ class MainActivity : AppCompatActivity() {
                 if (response.headers().get("Set-Cookie")?.isEmpty() == false) {
                     SPUtil.putString(
                         this@MainActivity,
-                        LOGIN_STATUE_COOKIE,
+                        LOGIN_STATUS_COOKIE,
                         response.headers().get("Set-Cookie")!!
+                    )
+                    SPUtil.putString(
+                        this@MainActivity,
+                        USER_AUTHORIZATION,
+                        kotlin.io.encoding.Base64.encode(
+                            "${emailEditText.text}:${passwordEditText.text}".toByteArray(
+                                Charsets.UTF_8
+                            )
+                        )
                     )
                 }
 
                 operationResultTextView.text = response.body()
+                startActivity(Intent(this@MainActivity, IndexActivity::class.java))
+                finish()
             }
 
             override fun onFailure(call: Call<String>, t: Throwable) {
