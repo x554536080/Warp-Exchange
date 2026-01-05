@@ -1,4 +1,4 @@
-package com.kuma.warpexchange.network
+package com.kuma.warpexchange.network.service
 
 import retrofit2.Call
 import retrofit2.http.Field

@@ -44,18 +44,31 @@
             android:layout_centerVertical="true"
             android:layout_marginEnd="10dp"
             android:text="Sign Out"
+            android:textSize="16sp"
             android:textColor="#2f4fdf" />
 
     </RelativeLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/index_container"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="10dp"
-        tools:context=".IndexActivity">
+        android:layout_height="match_parent">
 
-        <include layout="@layout/layout_balance" />
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/index_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            tools:context=".IndexActivity">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <include layout="@layout/layout_balance" />
+
+            <include layout="@layout/layout_order_form" />
+
+            <include layout="@layout/layout_my_orders" />
+
+            <include layout="@layout/layout_order_book" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
 </LinearLayout>

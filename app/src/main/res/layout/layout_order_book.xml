@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_order_book"
+    android:layout_width="match_parent"
+    android:layout_height="560dp"
+    android:layout_margin="10dp"
+    android:background="@drawable/border_gray_round"
+    android:orientation="vertical"
+    app:layout_constraintTop_toBottomOf="@id/layout_my_orders">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@drawable/border_gray2_round_top">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="10dp"
+            android:text="Order Book" />
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/bottom_line_black"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:text="Price"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:text="Quantity"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/bottom_line_gray"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/order_book_sell_item_5_price"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="end|center_vertical"
+                android:text="-"
+                android:textColor="#df7f7f" />
+
+            <TextView
+                android:id="@+id/order_book_sell_item_5_quantity"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="end|center_vertical"
+                android:text="-"
+                android:textColor="#df7f7f" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/bottom_line_gray"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/order_book_sell_item_4_price"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="end|center_vertical"
+                android:text="-"
+                android:textColor="#df7f7f" />
+
+            <TextView
+                android:id="@+id/order_book_sell_item_4_quantity"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="end|center_vertical"
+                android:text="-"
+                android:textColor="#df7f7f" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/bottom_line_gray"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/order_book_sell_item_3_price"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="end|center_vertical"
+                android:text="-"
+                android:textColor="#df7f7f" />
+
+            <TextView
+                android:id="@+id/order_book_sell_item_3_quantity"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="end|center_vertical"
+                android:text="-"
+                android:textColor="#df7f7f" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/bottom_line_gray"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/order_book_sell_item_2_price"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="end|center_vertical"
+                android:text="-"
+                android:textColor="#df7f7f" />
+
+            <TextView
+                android:id="@+id/order_book_sell_item_2_quantity"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="end|center_vertical"
+                android:text="-"
+                android:textColor="#df7f7f" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/bottom_line_gray"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/order_book_sell_item_1_price"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="end|center_vertical"
+                android:text="-"
+                android:textColor="#df7f7f" />
+
+            <TextView
+                android:id="@+id/order_book_sell_item_1_quantity"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="end|center_vertical"
+                android:text="-"
+                android:textColor="#df7f7f" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/bottom_line_gray"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/order_book_price_item"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="end|center_vertical"
+                android:text="0.00" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="end|center_vertical"
+                android:text="" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/bottom_line_gray"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/order_book_buy_item_1_price"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="end|center_vertical"
+                android:tag=""
+                android:text="-"
+                android:textColor="#7fdf7f" />
+
+            <TextView
+                android:id="@+id/order_book_buy_item_1_quantity"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="end|center_vertical"
+                android:text="-"
+                android:textColor="#7fdf7f" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/bottom_line_gray"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/order_book_buy_item_2_price"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="end|center_vertical"
+                android:text="-"
+                android:textColor="#7fdf7f" />
+
+            <TextView
+                android:id="@+id/order_book_buy_item_2_quantity"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="end|center_vertical"
+                android:text="-"
+                android:textColor="#7fdf7f" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/bottom_line_gray"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/order_book_buy_item_3_price"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="end|center_vertical"
+                android:text="-"
+                android:textColor="#7fdf7f" />
+
+            <TextView
+                android:id="@+id/order_book_buy_item_3_quantity"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="end|center_vertical"
+                android:text="-"
+                android:textColor="#7fdf7f" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/bottom_line_gray"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/order_book_buy_item_4_price"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="end|center_vertical"
+                android:text="-"
+                android:textColor="#7fdf7f" />
+
+            <TextView
+                android:id="@+id/order_book_buy_item_4_quantity"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="end|center_vertical"
+                android:text="-"
+                android:textColor="#7fdf7f" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/bottom_line_gray"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/order_book_buy_item_5_price"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="end|center_vertical"
+                android:text="-"
+                android:textColor="#7fdf7f" />
+
+            <TextView
+                android:id="@+id/order_book_buy_item_5_quantity"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="end|center_vertical"
+                android:text="-"
+                android:textColor="#7fdf7f" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

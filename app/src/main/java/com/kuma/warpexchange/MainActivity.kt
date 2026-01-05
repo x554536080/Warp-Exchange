@@ -11,7 +11,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.kuma.warpexchange.network.UserService
+import com.kuma.warpexchange.network.service.UserService
 import com.kuma.warpexchange.util.CookieUtil
 import com.kuma.warpexchange.util.SPUtil
 import okhttp3.OkHttpClient
@@ -45,12 +45,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var loginButton: Button
 
 
-    private val retrofit =
+    private val userService =
         Retrofit.Builder().baseUrl(BASE_URL_USER)
             .client(OkHttpClient.Builder().build())
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
-            .build()
+            .build().create(UserService::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -103,11 +103,11 @@ class MainActivity : AppCompatActivity() {
         signInToggleButton.alpha = 0.5f
 
         emailText = findViewById(R.id.login_email_text)
-        emailEditText = findViewById(R.id.login_email_edittext)
+        emailEditText = findViewById(R.id.login_email_editText)
         signUpNameText = findViewById(R.id.login_signUp_name_text)
-        signUpNameEditText = findViewById(R.id.login_signup_name_edittext)
+        signUpNameEditText = findViewById(R.id.login_signup_name_editText)
         passwordText = findViewById(R.id.login_password_text)
-        passwordEditText = findViewById(R.id.login_password_edittext)
+        passwordEditText = findViewById(R.id.login_password_editText)
         loginButton = findViewById(R.id.login_button)
         loginButton.setOnClickListener { v ->
             if (isSignUp) {
@@ -145,12 +145,11 @@ class MainActivity : AppCompatActivity() {
 
     private fun doSignUp() {
         val operationResultTextView: TextView = findViewById(R.id.operation_result)
-        val call = retrofit.create(UserService::class.java)
-            .signUp(
-                emailEditText.text.toString(),
-                signUpNameEditText.text.toString(),
-                passwordEditText.text.toString()
-            )
+        val call = userService.signUp(
+            emailEditText.text.toString(),
+            signUpNameEditText.text.toString(),
+            passwordEditText.text.toString()
+        )
         call.enqueue(object : Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {
                 operationResultTextView.text = response.body()
@@ -166,7 +165,7 @@ class MainActivity : AppCompatActivity() {
     @OptIn(ExperimentalEncodingApi::class)
     private fun doSignIn() {
         val operationResultTextView: TextView = findViewById(R.id.operation_result)
-        val call = retrofit.create(UserService::class.java)
+        val call = userService
             .signIn(
                 emailEditText.text.toString(),
                 passwordEditText.text.toString()

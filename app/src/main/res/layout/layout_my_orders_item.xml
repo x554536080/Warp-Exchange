@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:background="@drawable/bottom_line_gray"
+    android:gravity="center_vertical">
+
+    <TextView
+        android:id="@+id/my_orders_item_direction"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2" />
+
+    <TextView
+        android:id="@+id/my_orders_item_price"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="end" />
+
+    <TextView
+        android:id="@+id/my_orders_item_quantity"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="end" />
+
+    <TextView
+        android:id="@+id/my_orders_item_unfilled"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="end" />
+
+    <TextView
+        android:id="@+id/my_orders_item_cancel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="end"
+        android:text="Cancel"
+        android:textColor="#2f4fdf"
+        android:visibility="visible" />
+
+</LinearLayout>

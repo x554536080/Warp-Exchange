@@ -16,4 +16,8 @@ object SPUtil {
             ?: let { "" }
     }
 
+    fun removeString(context: Context, key: String) {
+        context.getSharedPreferences(APP_SP_KEY, Context.MODE_PRIVATE).edit().remove(key).apply()
+    }
+
 }
