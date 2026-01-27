@@ -26,7 +26,8 @@ import kotlin.io.encoding.ExperimentalEncodingApi
 class MainActivity : AppCompatActivity() {
 
     companion object {
-        const val BASE_URL_USER = "http://172.20.10.3:8000/"
+        const val BASE_URL_IP = "192.168.124.3"
+        const val BASE_URL_USER = "http://${BASE_URL_IP}:8000/"
         const val APP_SP_KEY = "warp_exchange_sp"
         const val LOGIN_STATUS_COOKIE = "login_status_cookie_sp"
         const val USER_AUTHORIZATION = "user_authorization_sp"

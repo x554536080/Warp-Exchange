@@ -14,6 +14,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.kuma.warpexchange.MainActivity.Companion.BASE_URL_IP
 import com.kuma.warpexchange.MainActivity.Companion.LOGIN_STATUS_COOKIE
 import com.kuma.warpexchange.MainActivity.Companion.USER_AUTHORIZATION
 import com.kuma.warpexchange.enums.Direction
@@ -21,6 +22,10 @@ import com.kuma.warpexchange.model.OrderRequestBean
 import com.kuma.warpexchange.network.service.TradingService
 import com.kuma.warpexchange.util.SPUtil
 import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.WebSocket
+import okhttp3.WebSocketListener
+import okio.ByteString
 import org.json.JSONArray
 import org.json.JSONObject
 import retrofit2.Call
@@ -34,7 +39,8 @@ import java.math.BigDecimal
 class IndexActivity : AppCompatActivity() {
 
     companion object {
-        const val BASE_URL_API = "http://172.20.10.3:8001/"
+        const val BASE_URL_API = "http://${BASE_URL_IP}:8001/"
+        const val BASE_URL_PUSH = "http://${BASE_URL_IP}:8006/"
     }
 
     private lateinit var myOrdersItemContainer: LinearLayout
@@ -54,6 +60,7 @@ class IndexActivity : AppCompatActivity() {
             .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
             .build().create(TradingService::class.java)
+    private lateinit var webSocket: WebSocket
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,6 +88,7 @@ class IndexActivity : AppCompatActivity() {
         initOrderForm()
         queryOpenOrders()
         queryOrderBook()
+        initWebSocket()
     }
 
     private fun initOrderForm() {
@@ -133,7 +141,9 @@ class IndexActivity : AppCompatActivity() {
                 Toast.makeText(this@IndexActivity, "Creation Successful", Toast.LENGTH_SHORT).show()
                 orderFormPriceEditText.setText("")
                 orderFormQuantityEditText.setText("")
+                //待优化刷新逻辑
                 queryPersonalAssets()
+                queryOpenOrders()
             }
 
             override fun onFailure(call: Call<String>, t: Throwable) {
@@ -147,6 +157,8 @@ class IndexActivity : AppCompatActivity() {
             object : Callback<String> {
                 override fun onResponse(call: Call<String>, response: Response<String>) {
                     println(response.body())
+
+                    myOrdersItemContainer.removeAllViews()
                     val itemsArray = JSONArray(response.body())
                     for (i in 0 until itemsArray.length()) {
                         val itemObject = itemsArray[i] as JSONObject
@@ -185,6 +197,23 @@ class IndexActivity : AppCompatActivity() {
                             Paint.UNDERLINE_TEXT_FLAG
                         itemView.findViewById<TextView>(R.id.my_orders_item_cancel).paint.isAntiAlias =
                             true
+                        itemView.findViewById<TextView>(R.id.my_orders_item_cancel)
+                            .setOnClickListener { v ->
+                                tradingService.cancelOrder(itemObject.getInt("id")).enqueue(
+                                    object : Callback<String> {
+                                        override fun onResponse(
+                                            call: Call<String>,
+                                            response: Response<String>
+                                        ) {
+                                            queryPersonalAssets()
+                                            queryOpenOrders()
+                                        }
+
+                                        override fun onFailure(call: Call<String>, t: Throwable) {
+                                            print("fail")
+                                        }
+                                    })
+                            }
                         myOrdersItemContainer.addView(itemView)
                     }
                 }
@@ -204,45 +233,7 @@ class IndexActivity : AppCompatActivity() {
         tradingService.getOrderBook().enqueue(object : Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {
                 if (response.body() != null) {
-                    val orderBookObject = JSONObject(response.body()!!)
-                    val buyArray = orderBookObject.getJSONArray("buy")
-                    val sellArray = orderBookObject.getJSONArray("sell")
-                    for (i in 0 until buyArray.length()) {
-                        val priceResourceId =
-                            resources.getIdentifier(
-                                "order_book_buy_item_${i + 1}_price",
-                                "id",
-                                packageName
-                            )
-                        findViewById<TextView>(priceResourceId).text =
-                            (buyArray[i] as JSONObject).getString("price")
-                        val quantityResourceId =
-                            resources.getIdentifier(
-                                "order_book_buy_item_${i + 1}_quantity",
-                                "id",
-                                packageName
-                            )
-                        findViewById<TextView>(quantityResourceId).text =
-                            (buyArray[i] as JSONObject).getString("quantity")
-                    }
-                    for (i in 0 until sellArray.length()) {
-                        val priceResourceId =
-                            resources.getIdentifier(
-                                "order_book_sell_item_${i + 1}_price",
-                                "id",
-                                packageName
-                            )
-                        findViewById<TextView>(priceResourceId).text =
-                            (sellArray[i] as JSONObject).getString("price")
-                        val quantityResourceId =
-                            resources.getIdentifier(
-                                "order_book_sell_item_${i + 1}_quantity",
-                                "id",
-                                packageName
-                            )
-                        findViewById<TextView>(quantityResourceId).text =
-                            (sellArray[i] as JSONObject).getString("quantity")
-                    }
+                    parseOrderBookJsonObject(JSONObject(response.body()!!))
                     println(response.body())
                 }
 
@@ -255,4 +246,98 @@ class IndexActivity : AppCompatActivity() {
         })
     }
 
+    private fun initWebSocket() {
+        webSocket = OkHttpClient().newWebSocket(Request.Builder().url("$BASE_URL_PUSH/notification")
+            .build(),
+            object : WebSocketListener() {
+                override fun onOpen(webSocket: WebSocket, response: okhttp3.Response) {
+                    super.onOpen(webSocket, response)
+                }
+
+                override fun onMessage(webSocket: WebSocket, text: String) {
+                    super.onMessage(webSocket, text)
+                    val jsonObject = JSONObject(text)
+                    if (jsonObject.getString("type") == "orderbook") {
+                        parseOrderBookJsonObject(jsonObject.getJSONObject("data"))
+                    }
+                }
+
+                override fun onMessage(webSocket: WebSocket, bytes: ByteString) {
+                    super.onMessage(webSocket, bytes)
+                }
+
+                override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
+                    super.onClosing(webSocket, code, reason)
+                }
+
+                override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
+                    super.onClosed(webSocket, code, reason)
+                }
+
+                override fun onFailure(
+                    webSocket: WebSocket,
+                    t: Throwable,
+                    response: okhttp3.Response?
+                ) {
+                    super.onFailure(webSocket, t, response)
+                }
+            })
+    }
+
+    private fun parseOrderBookJsonObject(orderBookObject: JSONObject) {
+        val buyArray = orderBookObject.getJSONArray("buy")
+        val sellArray = orderBookObject.getJSONArray("sell")
+        for (i in 0 until 5) {
+            val priceResourceId =
+                resources.getIdentifier(
+                    "order_book_buy_item_${i + 1}_price",
+                    "id",
+                    packageName
+                )
+            val quantityResourceId =
+                resources.getIdentifier(
+                    "order_book_buy_item_${i + 1}_quantity",
+                    "id",
+                    packageName
+                )
+            if (buyArray.length() > i) {
+                findViewById<TextView>(priceResourceId).text =
+                    (buyArray[i] as JSONObject).getString("price")
+                findViewById<TextView>(quantityResourceId).text =
+                    (buyArray[i] as JSONObject).getString("quantity")
+
+            } else {
+                findViewById<TextView>(priceResourceId).text = "-"
+                findViewById<TextView>(quantityResourceId).text = "-"
+            }
+        }
+        for (i in 0 until 5) {
+            val priceResourceId =
+                resources.getIdentifier(
+                    "order_book_sell_item_${i + 1}_price",
+                    "id",
+                    packageName
+                )
+            val quantityResourceId =
+                resources.getIdentifier(
+                    "order_book_sell_item_${i + 1}_quantity",
+                    "id",
+                    packageName
+                )
+            if (sellArray.length() > i) {
+                findViewById<TextView>(priceResourceId).text =
+                    (sellArray[i] as JSONObject).getString("price")
+                findViewById<TextView>(quantityResourceId).text =
+                    (sellArray[i] as JSONObject).getString("quantity")
+            } else {
+                findViewById<TextView>(priceResourceId).text = "-"
+                findViewById<TextView>(quantityResourceId).text = "-"
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        webSocket.close(1000, null)
+    }
 }
